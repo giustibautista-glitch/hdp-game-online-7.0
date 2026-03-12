@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HDP Online 🃏</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       PANTALLA: LOBBY / INICIO
+  ═══════════════════════════════════════════ -->
+  <div id="screen-lobby" class="screen active">
+    <div class="lobby-bg-cards" aria-hidden="true">
+      <span class="bg-card bc1">____</span>
+      <span class="bg-card bc2">HDP</span>
+      <span class="bg-card bc3">🃏</span>
+    </div>
+    <div class="lobby-container">
+      <div class="logo">
+        <h1>HDP<span class="logo-sub">online</span></h1>
+        <p class="logo-tagline">El juego de cartas para gente sin filtro</p>
+      </div>
+
+      <div class="card-form">
+        <input id="input-name" type="text" placeholder="Tu nombre" maxlength="18" autocomplete="off" />
+
+        <div class="form-actions">
+          <button id="btn-create" class="btn btn-black">Crear sala</button>
+          <div class="divider"><span>o</span></div>
+          <div class="join-row">
+            <input id="input-code" type="text" placeholder="Código de sala" maxlength="6" autocomplete="off" />
+            <button id="btn-join" class="btn btn-white">Unirse</button>
+          </div>
+        </div>
+        <p id="lobby-error" class="error-msg"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PANTALLA: SALA DE ESPERA
+  ═══════════════════════════════════════════ -->
+  <div id="screen-waiting" class="screen">
+    <div class="waiting-container">
+      <div class="room-header">
+        <div class="room-code-box">
+          <span class="room-code-label">Código de sala</span>
+          <span id="display-room-code" class="room-code-value">----</span>
+          <button id="btn-copy-code" class="btn-icon" title="Copiar código">📋</button>
+        </div>
+        <p class="room-hint">Comparte este código con tus amigos</p>
+      </div>
+
+      <div class="players-list-container">
+        <h3 class="section-title">Jugadores <span id="player-count">0</span>/8</h3>
+        <ul id="players-list" class="players-list"></ul>
+      </div>
+
+      <div class="waiting-actions">
+        <button id="btn-start-game" class="btn btn-black hidden">🃏 Comenzar partida</button>
+        <p id="waiting-msg" class="waiting-hint">Esperando al host...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PANTALLA: JUEGO
+  ═══════════════════════════════════════════ -->
+  <div id="screen-game" class="screen">
+    <!-- HEADER -->
+    <header class="game-header">
+      <div class="header-left">
+        <span class="game-logo">HDP</span>
+        <span id="header-room-code" class="header-code"></span>
+      </div>
+      <div id="scoreboard" class="scoreboard"></div>
+    </header>
+
+    <!-- ESTADO DEL JUEGO -->
+    <div id="game-status-bar" class="game-status-bar"></div>
+
+    <!-- CARTA NEGRA -->
+    <div class="black-card-container">
+      <div id="black-card" class="card card-black">
+        <p id="black-card-text">Cargando...</p>
+        <span class="card-badge">HDP</span>
+      </div>
+    </div>
+
+    <!-- ZONA DE JUEGO (dinámica) -->
+    <div id="game-zone" class="game-zone">
+
+      <!-- SUBPANEL: JUGADOR NORMAL (enviando cartas) -->
+      <div id="panel-submit" class="panel hidden">
+        <div class="panel-header">
+          <h3 class="panel-title">Tu mano</h3>
+          <span id="selection-counter" class="selection-counter"></span>
+        </div>
+        <div id="hand-cards" class="hand-cards"></div>
+        <div class="submit-area">
+          <div id="selected-preview" class="selected-preview"></div>
+          <button id="btn-submit-cards" class="btn btn-black" disabled>Enviar</button>
+        </div>
+        <p id="waiting-others" class="waiting-hint hidden">✅ Esperando a los demás...</p>
+      </div>
+
+      <!-- SUBPANEL: JUEZ (esperando) -->
+      <div id="panel-judge-wait" class="panel hidden">
+        <div class="judge-badge">👨‍⚖️ Eres el Juez esta ronda</div>
+        <p class="judge-hint">Esperando que todos envíen sus cartas...</p>
+        <div id="submissions-progress" class="submissions-progress"></div>
+      </div>
+
+      <!-- SUBPANEL: JUZGANDO -->
+      <div id="panel-judging" class="panel hidden">
+        <h3 class="panel-title">Elige la más graciosa 👇</h3>
+        <div id="submissions-grid" class="submissions-grid"></div>
+      </div>
+
+      <!-- SUBPANEL: FIN DE RONDA -->
+      <div id="panel-round-end" class="panel hidden">
+        <div id="round-winner-banner" class="round-winner-banner"></div>
+        <div id="winning-cards-display" class="winning-cards-display"></div>
+        <button id="btn-next-round" class="btn btn-black hidden">Siguiente ronda →</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PANTALLA: VICTORIA
+  ═══════════════════════════════════════════ -->
+  <div id="screen-gameover" class="screen">
+    <div class="gameover-container">
+      <div class="trophy">🏆</div>
+      <h2 class="gameover-title">¡Ganó!</h2>
+      <p id="gameover-winner" class="gameover-winner"></p>
+      <div id="final-ranking" class="final-ranking"></div>
+      <button id="btn-restart" class="btn btn-black">Jugar de nuevo</button>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
